@@ -1,0 +1,394 @@
+{
+  "task": "Check whether hello.py exists in the project folder.",
+  "abstractdstt": {
+    "segments": [
+      {
+        "transitions": [
+          {
+            "id": "t1",
+            "tool": "check_python_file_existence",
+            "inputs": [
+              "project_folder_path"
+            ],
+            "outputs": [
+              "python_file_exists"
+            ],
+            "output_type": {
+              "python_file_exists": "bool"
+            },
+            "complexityTime": "O(n)",
+            "complexitySpace": "O(1)",
+            "skill_required": [
+              "programmer",
+              "software_engineer",
+              "system_administrator"
+            ],
+            "resource_required": [
+              "filesystem"
+            ]
+          }
+        ],
+        "milestone": [
+          "python_file_exists"
+        ]
+      }
+    ]
+  },
+  "transition": {
+    "id": "t1",
+    "tool": "check_python_file_existence",
+    "inputs": [
+      "project_folder_path"
+    ],
+    "outputs": [
+      "python_file_exists"
+    ],
+    "output_type": {
+      "python_file_exists": "bool"
+    },
+    "complexityTime": "O(n)",
+    "complexitySpace": "O(1)",
+    "skill_required": [
+      "programmer",
+      "software_engineer",
+      "system_administrator"
+    ],
+    "resource_required": [
+      "filesystem"
+    ]
+  },
+  "execdstt": {
+    "status": "ok",
+    "segments": [
+      {
+        "transitions": [
+          {
+            "id": "t1",
+            "tool": "exists",
+            "inputs": {
+              "file_path": "/Users/senthilnadanjothi/works/fship/os2i/hello.py"
+            },
+            "outputs": {
+              "is_present": false
+            }
+          }
+        ],
+        "milestone": [
+          "is_present"
+        ]
+      }
+    ],
+    "context": {
+      "resolved_by": "Transition2Exec",
+      "notes": "Mapped abstract transition to grounded tool.",
+      "project_folder_path": "/Users/senthilnadanjothi/works/fship/os2i",
+      "target_file": "hello.py"
+    }
+  },
+  "status": "ok"
+}
+{
+  "task": "List every file in the current project folder.",
+  "abstractdstt": {
+    "segments": [
+      {
+        "transitions": [
+          {
+            "id": "t1",
+            "tool": "list_files_in_directory",
+            "inputs": [
+              "current_project_folder"
+            ],
+            "outputs": [
+              "file_list"
+            ],
+            "output_type": {
+              "file_list": "list<string>"
+            },
+            "complexityTime": "O(n)",
+            "complexitySpace": "O(n)",
+            "skill_required": [
+              "programmer",
+              "software_engineer",
+              "system_administrator"
+            ],
+            "resource_required": [
+              "filesystem"
+            ]
+          }
+        ],
+        "milestone": [
+          "file_list"
+        ]
+      }
+    ]
+  },
+  "transition": {
+    "id": "t1",
+    "tool": "list_files_in_directory",
+    "inputs": [
+      "current_project_folder"
+    ],
+    "outputs": [
+      "file_list"
+    ],
+    "output_type": {
+      "file_list": "list<string>"
+    },
+    "complexityTime": "O(n)",
+    "complexitySpace": "O(n)",
+    "skill_required": [
+      "programmer",
+      "software_engineer",
+      "system_administrator"
+    ],
+    "resource_required": [
+      "filesystem"
+    ]
+  },
+  "execdstt": {
+    "status": "ok",
+    "segments": [
+      {
+        "transitions": [
+          {
+            "id": "t1",
+            "tool": "list_directory_recursive",
+            "inputs": {
+              "directory_path": "/Users/senthilnadanjothi/works/fship/os2i"
+            },
+            "outputs": {
+              "entries": []
+            }
+          }
+        ],
+        "milestone": [
+          "entries"
+        ]
+      }
+    ],
+    "context": {
+      "resolved_by": "Transition2Exec",
+      "notes": "Mapped abstract transition to grounded tool.",
+      "project_folder_path": "/Users/senthilnadanjothi/works/fship/os2i"
+    }
+  },
+  "status": "ok"
+}
+{
+  "task": "Read the contents of hello.py.",
+  "abstractdstt": {
+    "segments": [
+      {
+        "transitions": [
+          {
+            "id": "t1",
+            "tool": "read_python_file",
+            "inputs": [
+              "hello.py"
+            ],
+            "outputs": [
+              "file_contents"
+            ],
+            "output_type": {
+              "file_contents": "string"
+            },
+            "complexityTime": "O(n)",
+            "complexitySpace": "O(1)",
+            "skill_required": [
+              "programmer",
+              "software_engineer",
+              "system_administrator"
+            ],
+            "resource_required": [
+              "filesystem"
+            ]
+          }
+        ],
+        "milestone": [
+          "file_contents"
+        ]
+      }
+    ]
+  },
+  "transition": {
+    "id": "t1",
+    "tool": "read_python_file",
+    "inputs": [
+      "hello.py"
+    ],
+    "outputs": [
+      "file_contents"
+    ],
+    "output_type": {
+      "file_contents": "string"
+    },
+    "complexityTime": "O(n)",
+    "complexitySpace": "O(1)",
+    "skill_required": [
+      "programmer",
+      "software_engineer",
+      "system_administrator"
+    ],
+    "resource_required": [
+      "filesystem"
+    ]
+  },
+  "execdstt": {
+    "status": "ok",
+    "segments": [
+      {
+        "transitions": [
+          {
+            "id": "t1",
+            "tool": "read_file",
+            "inputs": {
+              "file_path": "/Users/senthilnadanjothi/works/fship/os2i/hello.py"
+            },
+            "outputs": {
+              "text": ""
+            }
+          }
+        ],
+        "milestone": [
+          "text"
+        ]
+      }
+    ],
+    "context": {
+      "resolved_by": "Transition2Exec",
+      "notes": "Mapped abstract transition to grounded tool.",
+      "project_folder_path": "/Users/senthilnadanjothi/works/fship/os2i",
+      "target_file": "hello.py"
+    }
+  },
+  "status": "ok"
+}
+{
+  "task": "Delete test.txt if it exists.",
+  "abstractdstt": {
+    "segments": [
+      {
+        "transitions": [
+          {
+            "id": "t1",
+            "tool": "delete_file",
+            "inputs": [
+              "test.txt"
+            ],
+            "outputs": [
+              "file_deleted"
+            ],
+            "output_type": {
+              "file_deleted": "boolean"
+            },
+            "complexityTime": "O(1)",
+            "complexitySpace": "O(1)",
+            "skill_required": [
+              "programmer",
+              "software_engineer",
+              "system_administrator"
+            ],
+            "resource_required": []
+          }
+        ],
+        "milestone": [
+          "file_deleted"
+        ]
+      }
+    ]
+  },
+  "transition": {
+    "id": "t1",
+    "tool": "delete_file",
+    "inputs": [
+      "test.txt"
+    ],
+    "outputs": [
+      "file_deleted"
+    ],
+    "output_type": {
+      "file_deleted": "boolean"
+    },
+    "complexityTime": "O(1)",
+    "complexitySpace": "O(1)",
+    "skill_required": [
+      "programmer",
+      "software_engineer",
+      "system_administrator"
+    ],
+    "resource_required": []
+  },
+  "execdstt": {
+    "status": "not_mappable",
+    "segments": [],
+    "context": null
+  },
+  "status": "error"
+}
+{
+  "task": "Create sample.txt with content \"hello\".",
+  "abstractdstt": {
+    "segments": [
+      {
+        "transitions": [
+          {
+            "id": "t1",
+            "tool": "create_and_write_text_file",
+            "inputs": [
+              "content"
+            ],
+            "outputs": [
+              "sample.txt"
+            ],
+            "output_type": {
+              "sample.txt": "file"
+            },
+            "complexityTime": "O(1)",
+            "complexitySpace": "O(1)",
+            "skill_required": [
+              "programmer",
+              "software_engineer",
+              "system_administrator"
+            ],
+            "resource_required": [
+              "filesystem"
+            ]
+          }
+        ],
+        "milestone": [
+          "sample.txt"
+        ]
+      }
+    ]
+  },
+  "transition": {
+    "id": "t1",
+    "tool": "create_and_write_text_file",
+    "inputs": [
+      "content"
+    ],
+    "outputs": [
+      "sample.txt"
+    ],
+    "output_type": {
+      "sample.txt": "file"
+    },
+    "complexityTime": "O(1)",
+    "complexitySpace": "O(1)",
+    "skill_required": [
+      "programmer",
+      "software_engineer",
+      "system_administrator"
+    ],
+    "resource_required": [
+      "filesystem"
+    ]
+  },
+  "execdstt": {
+    "status": "not_mappable",
+    "segments": [],
+    "context": null
+  },
+  "status": "error"
+}

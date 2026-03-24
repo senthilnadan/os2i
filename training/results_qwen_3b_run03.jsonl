@@ -1,0 +1,207 @@
+{
+  "id": "qwen_task_01",
+  "task": "Check whether hello.py exists in the project folder.",
+  "abstract_transition": {
+    "id": "t1",
+    "tool": "check_python_file_existence",
+    "inputs": [
+      "project_folder_path"
+    ],
+    "outputs": [
+      "python_file_exists"
+    ],
+    "output_type": {
+      "python_file_exists": "bool"
+    },
+    "complexityTime": "O(n)",
+    "complexitySpace": "O(1)",
+    "skill_required": [
+      "programmer",
+      "software_engineer",
+      "system_administrator"
+    ],
+    "resource_required": [
+      "filesystem"
+    ]
+  },
+  "expected_abstractdstt": {
+    "segments": [
+      {
+        "transitions": [
+          {
+            "id": "t1",
+            "tool": "check_python_file_existence",
+            "inputs": [
+              "project_folder_path"
+            ],
+            "outputs": [
+              "python_file_exists"
+            ],
+            "output_type": {
+              "python_file_exists": "bool"
+            },
+            "complexityTime": "O(n)",
+            "complexitySpace": "O(1)",
+            "skill_required": [
+              "programmer",
+              "software_engineer",
+              "system_administrator"
+            ],
+            "resource_required": [
+              "filesystem"
+            ]
+          }
+        ],
+        "milestone": [
+          "python_file_exists"
+        ]
+      }
+    ]
+  },
+  "stage1_tool_sequence": "TOOL: list_directory\nINPUTS: directory_path=/Users/senthilnadanjothi/works/fship/os2i\nOUTPUTS: null\n\nTOOL: exists\nINPUTS: file_path=hello.py\nOUTPUTS: python_file_exists=null\n\nTOOL: run_shell_command\nINPUTS: command=\"python hello.py\", file_path=hello.py\nOUTPUTS: null",
+  "stage2_dstt_raw": "{\"status\":\"ok\",\"segments\":[{\"transitions\":[{\"id\":\"t1\",\"tool\":\"list_directory\",\"inputs\":{\"directory_path\":\"/Users/senthilnadanjothi/works/fship/os2i\"},\"outputs\":{\"entries\":null}},{\"id\":\"t1\",\"tool\":\"exists\",\"inputs\":{\"file_path\":\"hello.py\"},\"outputs\":{\"is_present\":null}},{\"id\":\"t1\",\"tool\":\"run_shell_command\",\"inputs\":{\"command\":\"python hello.py\",\"working_directory\":\"/Users/senthilnadanjothi/works/fship/os2i\"},\"outputs\":{\"stdout\":null,\"stderr\":null,\"return_code\":null}}],\"milestone\":[\"entries\",\"is_present\",\"return_code\"]}]}\"",
+  "execdstt": {
+    "status": "not_mappable",
+    "segments": []
+  },
+  "meta_status": "error",
+  "meta_detail": "Transition 't1' references inputs ['file_path'] that are not produced by prior outputs or provided context."
+}
+{
+  "id": "qwen_task_02",
+  "task": "List every file in the current project folder.",
+  "abstract_transition": {
+    "id": "t1",
+    "tool": "list_files_in_directory",
+    "inputs": [
+      "current_project_folder"
+    ],
+    "outputs": [
+      "file_list"
+    ],
+    "output_type": {
+      "file_list": "list<string>"
+    },
+    "complexityTime": "O(n)",
+    "complexitySpace": "O(n)",
+    "skill_required": [
+      "programmer",
+      "software_engineer",
+      "system_administrator"
+    ],
+    "resource_required": [
+      "filesystem"
+    ]
+  },
+  "expected_abstractdstt": {
+    "segments": [
+      {
+        "transitions": [
+          {
+            "id": "t1",
+            "tool": "list_files_in_directory",
+            "inputs": [
+              "current_project_folder"
+            ],
+            "outputs": [
+              "file_list"
+            ],
+            "output_type": {
+              "file_list": "list<string>"
+            },
+            "complexityTime": "O(n)",
+            "complexitySpace": "O(n)",
+            "skill_required": [
+              "programmer",
+              "software_engineer",
+              "system_administrator"
+            ],
+            "resource_required": [
+              "filesystem"
+            ]
+          }
+        ],
+        "milestone": [
+          "file_list"
+        ]
+      }
+    ]
+  },
+  "stage1_tool_sequence": "TOOL: list_directory\nINPUTS: directory_path=/Users/senthilnadanjothi/works/fship/os2i\nOUTPUTS: file_list=null, ...",
+  "stage2_dstt_raw": "{\"status\":\"ok\",\"segments\":[{\"transitions\":[{\"id\":\"t1\",\"tool\":\"list_directory\",\"inputs\":{\"directory_path\":\"/Users/senthilnadanjothi/works/fship/os2i\"},\"outputs\":{\"file_list\":null}}],\"milestone\":[\"file_list\"]]}]",
+  "execdstt": {
+    "status": "not_mappable",
+    "segments": []
+  },
+  "meta_status": "error",
+  "meta_detail": "Expecting ',' delimiter: line 1 column 207 (char 206)"
+}
+{
+  "id": "qwen_task_03",
+  "task": "Read the contents of hello.py.",
+  "abstract_transition": {
+    "id": "t1",
+    "tool": "read_python_file",
+    "inputs": [
+      "hello.py"
+    ],
+    "outputs": [
+      "file_contents"
+    ],
+    "output_type": {
+      "file_contents": "string"
+    },
+    "complexityTime": "O(n)",
+    "complexitySpace": "O(1)",
+    "skill_required": [
+      "programmer",
+      "software_engineer",
+      "system_administrator"
+    ],
+    "resource_required": [
+      "filesystem"
+    ]
+  },
+  "expected_abstractdstt": {
+    "segments": [
+      {
+        "transitions": [
+          {
+            "id": "t1",
+            "tool": "read_python_file",
+            "inputs": [
+              "hello.py"
+            ],
+            "outputs": [
+              "file_contents"
+            ],
+            "output_type": {
+              "file_contents": "string"
+            },
+            "complexityTime": "O(n)",
+            "complexitySpace": "O(1)",
+            "skill_required": [
+              "programmer",
+              "software_engineer",
+              "system_administrator"
+            ],
+            "resource_required": [
+              "filesystem"
+            ]
+          }
+        ],
+        "milestone": [
+          "file_contents"
+        ]
+      }
+    ]
+  },
+  "stage1_tool_sequence": "TOOL: list_directory_recursive\nINPUTS: directory_path=/Users/senthilnadanjothi/works/fship/os2i\nOUTPUTS: null\n\nTOOL: exists\nINPUTS: file_path=/Users/senthilnadanjothi/works/fship/os2i/hello.py\nOUTPUTS: null\n\nTOOL: read_file\nINPUTS: file_path=/Users/senthilnadanjothi/works/fship/os2i/hello.py\nOUTPUTS: file_contents=null",
+  "stage2_dstt_raw": "{\"status\":\"ok\",\"segments\":[{\"transitions\":[{\"id\":\"t1\",\"tool\":\"list_directory_recursive\",\"inputs\":{\"directory_path\":\"/Users/senthilnadanjothi/works/fship/os2i\"},\"outputs\":{\"entries\":null}},{\"id\":\"t1\",\"tool\":\"exists\",\"inputs\":{\"file_path\":\"/Users/senthilnadanjothi/works/fship/os2i/hello.py\"},\"outputs\":{\"is_present\":null}},{\"id\":\"t1\",\"tool\":\"read_file\",\"inputs\":{\"file_path\":\"/Users/senthilnadanjothi/works/fship/os2i/hello.py\"},\"outputs\":{\"text\":null}}],\"milestone\":[\"text\"]}]}\"",
+  "execdstt": {
+    "status": "not_mappable",
+    "segments": []
+  },
+  "meta_status": "error",
+  "meta_detail": "Transition 't1' references inputs ['file_path'] that are not produced by prior outputs or provided context."
+}
