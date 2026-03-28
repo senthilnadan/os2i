@@ -2,18 +2,7 @@
 
 ## Response to TaskExecutor Team — transition2exec Contract and Runtime Expectations
 
-_Date: 2026-03-22 | v1.0 baseline: 12/17 field test seeds passing_
-_Updated: 2026-03-28 | v1.1 stable: 14/16 downstream seeds passing — v1.1 architecture shipped_
-
-### v1.1 Architecture (stable as of 2026-03-28)
-
-- **Stage 1 (LLM):** tool selection + key bindings only. Prompt shows state key names, never values. Output: `TOOL: <name>` + `BIND: input_key <- state_key`.
-- **Stage 1.5 (program):** value resolution — looks up each BIND key in state, falls back to direct state match, then `extract_from_task` (narrow LLM call), then marks ambiguous.
-- **Stage 2 (eliminated):** `ExecutableTransition` constructed directly in Python. No LLM formatter.
-
-**What this eliminates structurally:** silent value substitution (ISS-018 class) — LLM never touches state values, so it cannot corrupt them.
-
-**Known open gaps:** ISS-017 (count/search → list instead of shell), ISS-019 (tool-selection regression for t2+ without context). Both surface as detectable failures, not silent wrong values.
+_Date: 2026-03-22 | Baseline: 12/17 field test seeds passing_
 
 ---
 
@@ -176,91 +165,6 @@ Training fix: add `read_temp_file → read_file` as a labelled seed example.
 ### ISS-016 — Alternative tool for write transition (seed 12b)
 **Status:** Closed — valid alternative
 `write_stdout_to_file` → `run_shell_command` (via shell redirection). Both tools can write content to a file. Pipeline did not hallucinate. taskexecutor must tolerate output key name differences between the grounded tool and the abstract transition.
-
----
-
-### ISS-018 — Input value resolved to wrong state key — outputs key used as value (seed ld_04) — P1
-**Status:** Open — top priority
-`inspect_directory` → `list_directory` tool selected correctly, but `directory_path` input is resolved to `"entries"` (the abstract transition's output key name) instead of `"/tmp/os2ie_sandbox/target"` (the state value for `directory_path`).
-**Root cause hypothesis:** During state resolution, the model confuses the abstract transition's output key names with input values. It appears to scan the abstract transition outputs list and use those as values rather than looking up the input key in state/context.
-**Reproduction:**
-- Task: "Inspect the target directory and list what is inside it"
-- State: `{ "directory_path": "/tmp/os2ie_sandbox/target" }`
-- Abstract transition inputs: `["directory_path"]`, outputs: `["entries"]`
-- Expected: `{ "directory_path": "/tmp/os2ie_sandbox/target" }`
-- Actual: `{ "directory_path": "entries" }`
-
-**Fix required:** State resolution must look up each input key in context and return its value. Abstract transition output keys must never be used as input values.
-
-**Deeper diagnosis — stage 2 is the actual failure point:**
-Python's `_extract_resolved_tools` correctly overrides stage 1's wrong value: `resolve_input("directory_path", context)` returns `"/tmp/os2ie_sandbox/target"` from state. The template passed to stage 2 is therefore correct. Stage 2 then re-introduces the wrong value despite being told to copy verbatim.
-
-Materialized stage 2 prompt for seed ld_04 (the input the LLM receives — note the correct path is present):
-
-```
-Convert these resolved tool templates into an executable DSTT JSON.
-
-resolved_tools (each entry is a fully-populated transition template — all values already resolved):
-list_directory: {"id": "t?", "tool": "list_directory", "inputs": {"directory_path": "/tmp/os2ie_sandbox/target"}, "outputs": {"entries": null}}
-
-Rules:
-- Copy each tool's template exactly. Replace "t?" with sequential ids starting at t1, t2, etc.
-- inputs: copy values exactly as given. Do not add, remove, or change any keys or values.
-- outputs: all values must be null.
-- milestone: list of output key names from the last transition's outputs.
-- Only include tools from resolved_tools. No extra tools, no extra keys.
-- Each tool produces exactly ONE transition object with id, tool, inputs, and outputs together. Never split a transition.
-- If resolved_tools is "(none matched)" respond with: {"status":"not_mappable","segments":[]}
-
-Respond with ONLY valid JSON, no extra text:
-{"status":"ok","segments":[{"transitions":[{"id":"t1","tool":"<name>","inputs":{"<key>":"<value>"},"outputs":{"<key>":null}}],"milestone":["<output_key>"]}]}
-```
-
-Stage 2 LLM response (wrong — model ignores the correct value in the template):
-```json
-{"status":"ok","segments":[{"transitions":[{"id":"t1","tool":"list_directory","inputs":{"directory_path":"entries"},"outputs":{"entries":null}}],"milestone":["entries"]}]}
-```
-
-The model receives `"directory_path": "/tmp/os2ie_sandbox/target"` in the template but outputs `"directory_path": "entries"`. It is associating the output key name `entries` with the input value — an instruction-following failure in smaller models (qwen2.5:3b). The 7b model does not exhibit this on the same prompt.
-
-**Revised fix (v1.1 architecture):** Adopt the programmatic transition construction pipeline:
-- Stage 1 (LLM): tool selection + key binding only — LLM never sees state values, only key names
-- Stage 1.5 (program): value resolution using bindings against state
-- Stage 2: eliminated — `ExecutableTransition` constructed directly in Python
-
-Resolution algorithm (stage 1.5):
-```
-for input_key in tool.input_signature:
-    bind_key = BIND.get(input_key, input_key)    # default: same key name
-    if bind_key in state:
-        inputs[input_key] = state[bind_key]       # exact copy from state
-    elif input_key in state:
-        inputs[input_key] = state[input_key]      # direct state match fallback
-    else:
-        result = extract_from_task(input_key, task)
-        if result is None or result == "" or result == input_key:
-            mark ambiguous                         # key echo = same failure mode, explicit not a guess
-        else:
-            inputs[input_key] = result
-```
-
-**Open decision — `extract_from_task` null contract:**
-The narrow extract LLM call must define what "nothing found" means. Defined as: returns `None` when the LLM returns empty string, null, or a value identical to the input key name (key echo — e.g. `directory_path="directory_path"`). Key echo is the same silent substitution failure seen in ISS-018, just from the extraction path. The extract call must NOT have an "always returns something" guarantee. This contract needs to be locked before the extract call is implemented.
-
----
-
-### ISS-019 — v1.1 stage 1 tool-selection regression from removing context (seeds 10a, 11b)
-**Status:** Open — known trade-off of v1.1 architecture
-Removing context from stage 1 improves value-resolution reliability (eliminates silent substitution class) but reduces tool-selection quality for ambiguous tasks.
-
-- **10a**: task "create log.txt, append line1, append line2" → stage 1 plans two `append_to_file` transitions instead of `create_file` for t1. Without context, the model over-plans from task text.
-- **11b**: stage 1 hallucinates `create_file_in_directory` (not in catalog) instead of grounding to `create_file`. Context presence in v1.0 reduced hallucination rate.
-
-**Trade-off accepted:** v1.1 eliminates the silent value-substitution failure class (ISS-018) structurally. Tool-selection regressions surface as `not_mappable` or wrong-tool — both are detectable and recoverable by the runtime. Silent wrong-value propagation (v1.0 failure mode) is not.
-
-**Baseline:** v1.0 12/17 seeds → v1.1 10/17 seeds. Net: −2 on tool selection, +structural guarantee on value resolution.
-
-**Possible fix:** Training data with `create_log_file → create_file` and `create_file_in_directory → create_file` examples would close this gap without reintroducing state values into stage 1.
 
 ---
 

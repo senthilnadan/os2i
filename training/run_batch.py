@@ -51,7 +51,7 @@ def _check_expected(result_dstt: dict, expected: dict | None) -> str | None:
 def _load_entries(seed_path: Path) -> tuple[list[dict], list[GroundedTool]]:
     """Support both JSONL and JSON-with-seeds-array formats."""
     raw = seed_path.read_text().strip()
-    if raw.startswith("{") and "\n{" not in raw:
+    if raw.startswith("{"):
         data = json.loads(raw)
         shared_tools = _load_tools(data.get("available_tools"))
         return data.get("seeds", []), shared_tools
